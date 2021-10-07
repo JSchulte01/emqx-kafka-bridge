@@ -1,5 +1,5 @@
 %%--------------------------------------------------------------------
-%% Copyright (c) 2020 EMQ Technologies Co., Ltd. All Rights Reserved.
+%% Copyright (c) 2015-2017 Feng Lee <feng@emqtt.io>.
 %%
 %% Licensed under the Apache License, Version 2.0 (the "License");
 %% you may not use this file except in compliance with the License.
@@ -14,21 +14,23 @@
 %% limitations under the License.
 %%--------------------------------------------------------------------
 
--module(emqx_plugin_template_app).
+-module(emq_kafka_bridge_app).
 
 -behaviour(application).
 
 -emqx_plugin(?MODULE).
 
--export([ start/2
-        , stop/1
-        ]).
+%% Application callbacks
+-export([start/2, stop/1]).
 
 start(_StartType, _StartArgs) ->
-    {ok, Sup} = emqx_plugin_template_sup:start_link(),
-    emqx_plugin_template:load(application:get_all_env()),
+    {ok, Sup} = emq_kafka_bridge_sup:start_link(),
+    % ok = emq_access_control:register_mod(auth, emq_auth_emq_kafka_bridge, []),
+    % ok = emq_access_control:register_mod(acl, emq_acl_emq_kafka_bridge, []),
+    emq_kafka_bridge:load(application:get_all_env()),
     {ok, Sup}.
 
 stop(_State) ->
-    emqx_plugin_template:unload().
-
+    % ok = emq_access_control:unregister_mod(auth, emq_auth_emq_kafka_bridge),
+    % ok = emq_access_control:unregister_mod(acl, emq_acl_emq_kafka_bridge),
+    emq_kafka_bridge:unload().

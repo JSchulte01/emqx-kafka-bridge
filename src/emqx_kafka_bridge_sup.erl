@@ -1,5 +1,5 @@
 %%--------------------------------------------------------------------
-%% Copyright (c) 2020 EMQ Technologies Co., Ltd. All Rights Reserved.
+%% Copyright (c) 2015-2017 Feng Lee <feng@emqtt.io>.
 %%
 %% Licensed under the Apache License, Version 2.0 (the "License");
 %% you may not use this file except in compliance with the License.
@@ -14,13 +14,18 @@
 %% limitations under the License.
 %%--------------------------------------------------------------------
 
--module(emqx_cli_demo).
+-module(emq_kafka_bridge_sup).
 
--export([cmd/1]).
+-behaviour(supervisor).
 
-cmd(["arg1", "arg2"]) ->
-    emqx_ctl:print("ok");
+%% API
+-export([start_link/0]).
 
-cmd(_) ->
-    emqx_ctl:usage([{"cmd arg1 arg2", "cmd demo"}]).
+%% Supervisor callbacks
+-export([init/1]).
 
+start_link() ->
+    supervisor:start_link({local, ?MODULE}, ?MODULE, []).
+
+init([]) ->
+    {ok, { {one_for_one, 10, 100}, []} }.
